@@ -27,7 +27,7 @@ Next.js (App Router) · TypeScript · Tailwind CSS · Prisma · PostgreSQL on Ra
 | `GET /api/ingredients` | Non-staple ingredients for the autocomplete |
 | `GET /api/recipes?ingredients=a,b&category=pasta&offset=0` | Ranked matches (20 per page) or category browse |
 | `GET /api/recipes/lookup?slugs=a,b&ingredients=x` | Cards for favorites |
-| `GET /api/health` | Health check |
+| `GET /api/health` | Health check (verifies the database has recipes) |
 
 ## Development rules
 
@@ -39,8 +39,9 @@ must pass before pushing to `main`, which Railway deploys automatically.
 Configured in [`railway.json`](railway.json):
 
 1. Build: `npm run build` (`prisma generate && next build`; no database needed).
-2. Pre-deploy: `npm run db:deploy` (`prisma migrate deploy && prisma db seed`).
-3. Start: `npm run start`. Health check: `/api/health`.
+2. Start: `npm run start`, which first runs `npm run db:deploy` (`prisma migrate deploy && prisma db seed`)
+   and then `next start`.
+3. Health check: `/api/health` (fails with 503 until the database is migrated and seeded).
 
 `DATABASE_URL` must be set on the app service (reference to the Railway PostgreSQL service).
 

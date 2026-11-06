@@ -20,8 +20,11 @@
 ## Project notes
 
 - Stack: Next.js (App Router) + TypeScript + Tailwind CSS + Prisma (v6) + Vitest.
-- Railway config lives in `railway.json`: build `npm run build`, pre-deploy `npm run db:deploy`
-  (`prisma migrate deploy && prisma db seed`), start `npm run start`.
+- Railway config lives in `railway.json`: build `npm run build`, start `npm run start`.
+- `npm run start` runs `npm run db:deploy` (`prisma migrate deploy && prisma db seed`) and only then
+  `next start`, so the database is migrated and seeded before the app serves traffic. (Railway's
+  pre-deploy step did not run on this service, so it is intentionally not used.)
+- `/api/health` returns 503 unless the database is reachable and seeded, so a broken deploy never goes live.
 - `npm run build` must work without `DATABASE_URL`: never query the database at build time;
   data pages and API routes use `export const dynamic = "force-dynamic"`.
 - Migrations are written offline with `prisma migrate diff ... --script` (no local database).
