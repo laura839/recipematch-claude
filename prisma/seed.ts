@@ -9,6 +9,7 @@
  *   if a translation is missing.
  */
 import { PrismaClient } from "@prisma/client";
+import { photoUrl, RECIPE_PHOTOS } from "../data/images";
 import { INGREDIENTS } from "../data/ingredients";
 import { INGREDIENT_NAMES_ET, RECIPE_TRANSLATIONS_ET, translateQuantityEt } from "../data/i18n/et";
 import { RECIPES } from "../data/recipes";
@@ -53,7 +54,8 @@ async function main() {
       prepTimeMinutes: recipe.prepTimeMinutes,
       steps: [...recipe.steps],
       stepsEt: [...et.steps],
-      imageUrl: recipe.imageUrl ?? null,
+      // Real photo when one was selected for this recipe; otherwise null → category placeholder.
+      imageUrl: RECIPE_PHOTOS[recipe.slug] ? photoUrl(RECIPE_PHOTOS[recipe.slug]) : (recipe.imageUrl ?? null),
     };
 
     await prisma.recipe.upsert({
@@ -63,7 +65,11 @@ async function main() {
     });
   }
 
-  console.log(`Seed complete: ${INGREDIENTS.length} ingredients, ${RECIPES.length} recipes upserted.`);
+  const withPhotos = RECIPES.filter((r) => RECIPE_PHOTOS[r.slug]).length;
+  console.log(
+    `Seed complete: ${INGREDIENTS.length} ingredients, ${RECIPES.length} recipes upserted ` +
+      `(${withPhotos} with photos, ${RECIPES.length - withPhotos} with placeholders).`,
+  );
 }
 
 main()

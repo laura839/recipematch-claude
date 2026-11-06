@@ -97,6 +97,7 @@ const en = {
     staples: "Staples (assumed)",
     noneAvailable: "None of your ingredients are used here.",
     nothingMissing: "Nothing missing — you’re ready to cook!",
+    photoCredit: "Photo:",
   },
   notFound: {
     title: "Recipe not found",
@@ -198,6 +199,7 @@ const et: Messages = {
     staples: "Põhiained (eeldatavasti olemas)",
     noneAvailable: "Ühtegi sinu koostisosa siin ei kasutata.",
     nothingMissing: "Midagi pole puudu — võid kohe alustada!",
+    photoCredit: "Foto:",
   },
   notFound: {
     title: "Retsepti ei leitud",

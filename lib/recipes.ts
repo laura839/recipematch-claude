@@ -1,4 +1,5 @@
 import "server-only";
+import { photoPageUrl, photoUrl, RECIPE_PHOTOS } from "../data/images";
 import { prisma } from "./prisma";
 import type { MatchIngredient, MatchableRecipe } from "./match";
 import type { IngredientOption, RecipeDetailData } from "./types";
@@ -57,6 +58,11 @@ export async function getRecipeDetail(slug: string): Promise<RecipeDetailData | 
   const row = await prisma.recipe.findUnique({ where: { slug }, include: recipeInclude });
   if (!row) return null;
   const hasEtSteps = row.stepsEt.length === row.steps.length;
+  const photo = RECIPE_PHOTOS[row.slug];
+  const photoCredit =
+    photo && row.imageUrl === photoUrl(photo)
+      ? { photographer: photo.photographer, pageUrl: photoPageUrl(photo) }
+      : null;
   return {
     slug: row.slug,
     name: { en: row.name, et: et(row.nameEt, row.name) },
@@ -64,6 +70,7 @@ export async function getRecipeDetail(slug: string): Promise<RecipeDetailData | 
     prepTimeMinutes: row.prepTimeMinutes,
     imageUrl: row.imageUrl,
     steps: { en: row.steps, et: hasEtSteps ? row.stepsEt : row.steps },
+    photoCredit,
     ingredients: row.ingredients.map((ri) => ({
       slug: ri.ingredient.slug,
       name: ri.ingredient.name,

@@ -25,7 +25,21 @@ export function RecipeDetailView({ recipe }: { recipe: RecipeDetailData }) {
       </Link>
 
       <header className="overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-stone-200/80">
-        <RecipePlaceholder category={recipe.category} imageUrl={recipe.imageUrl} name={name} size="hero" />
+        <div className="relative">
+          <RecipePlaceholder category={recipe.category} imageUrl={recipe.imageUrl} name={name} size="hero" />
+          {recipe.photoCredit && (
+            <p className="absolute bottom-2 right-2 rounded-full bg-black/45 px-2.5 py-1 text-[11px] text-white/90 backdrop-blur-sm">
+              {t.detail.photoCredit}{" "}
+              <a href={recipe.photoCredit.pageUrl} target="_blank" rel="noopener noreferrer" className="underline-offset-2 hover:underline">
+                {recipe.photoCredit.photographer}
+              </a>{" "}
+              /{" "}
+              <a href="https://unsplash.com" target="_blank" rel="noopener noreferrer" className="underline-offset-2 hover:underline">
+                Unsplash
+              </a>
+            </p>
+          )}
+        </div>
         <div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-end sm:justify-between sm:p-6">
           <div className="space-y-2">
             <h1 className="text-2xl font-bold tracking-tight text-stone-900 [hyphens:auto] sm:text-3xl">{name}</h1>

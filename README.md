@@ -18,6 +18,10 @@ Next.js (App Router) · TypeScript · Tailwind CSS · Prisma · PostgreSQL on Ra
 - **Data**: ~130 original recipes in [`data/recipes/`](data/recipes) and standardized ingredients in
   [`data/ingredients.ts`](data/ingredients.ts). [`prisma/seed.ts`](prisma/seed.ts) upserts them by slug
   (idempotent, never deletes).
+- **Photos**: 85 of 134 recipes have a real food photo from Unsplash (free Unsplash License; Unsplash+
+  images excluded), listed with photographer credits in [`data/images.ts`](data/images.ts). The seed stores
+  the URL in `Recipe.imageUrl`; images are rendered with `next/image` through Unsplash's CDN (responsive
+  sizes, AVIF/WebP). Recipes without a photo, or whose photo fails to load, show the category placeholder.
 - **No accounts**: selected ingredients, favorites and the language are stored in the browser's localStorage.
 - **Bilingual (Estonian / English)**: Estonian is the default. UI texts live in [`lib/i18n.ts`](lib/i18n.ts);
   Estonian recipe names, steps and ingredient names in [`data/i18n/et/`](data/i18n/et), and quantities are

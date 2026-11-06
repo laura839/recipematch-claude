@@ -64,7 +64,7 @@ export function RecipeCard({ recipe }: { recipe: RecipeCardData }) {
 export function RecipeCardSkeleton() {
   return (
     <div className="overflow-hidden rounded-2xl bg-white ring-1 ring-stone-200/80" aria-hidden="true">
-      <div className="h-36 animate-pulse bg-stone-100" />
+      <div className="h-40 animate-pulse bg-stone-100" />
       <div className="space-y-3 p-4">
         <div className="h-4 w-3/4 animate-pulse rounded bg-stone-100" />
         <div className="h-3 w-1/2 animate-pulse rounded bg-stone-100" />

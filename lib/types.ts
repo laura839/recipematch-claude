@@ -50,4 +50,6 @@ export type RecipeDetailData = {
   imageUrl: string | null;
   ingredients: DetailIngredient[];
   steps: { en: string[]; et: string[] };
+  /** Credit for the recipe photo, when it comes from Unsplash. */
+  photoCredit: { photographer: string; pageUrl: string } | null;
 };
