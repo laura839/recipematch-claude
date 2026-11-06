@@ -1,11 +1,11 @@
 import type { MatchResult } from "./match";
-import type { RecipeSummary } from "./recipes";
+import type { BilingualIngredient, RecipeSummary } from "./recipes";
 import type { RecipeCardData } from "./types";
 
-export function toCard(recipe: RecipeSummary, match: MatchResult | null): RecipeCardData {
+export function toCard(recipe: RecipeSummary, match: MatchResult<BilingualIngredient> | null): RecipeCardData {
   return {
     slug: recipe.slug,
-    name: recipe.name,
+    name: { en: recipe.name, et: recipe.nameEt },
     category: recipe.category,
     prepTimeMinutes: recipe.prepTimeMinutes,
     imageUrl: recipe.imageUrl,
@@ -14,7 +14,7 @@ export function toCard(recipe: RecipeSummary, match: MatchResult | null): Recipe
           percent: match.percent,
           matchedCount: match.matchedCount,
           totalCount: match.totalCount,
-          missing: match.missing.map((i) => i.name),
+          missing: match.missing.map((i) => ({ en: i.name, et: i.nameEt })),
         }
       : null,
   };

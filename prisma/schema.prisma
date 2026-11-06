@@ -11,6 +11,8 @@ model Ingredient {
   id       Int                @id @default(autoincrement())
   slug     String             @unique
   name     String
+  /// Estonian name (English is in `name`)
+  nameEt   String             @default("")
   isStaple Boolean            @default(false)
   recipes  RecipeIngredient[]
 }
@@ -19,9 +21,13 @@ model Recipe {
   id              Int                @id @default(autoincrement())
   slug            String             @unique
   name            String
+  /// Estonian name (English is in `name`)
+  nameEt          String             @default("")
   category        String
   prepTimeMinutes Int
   steps           String[]
+  /// Estonian steps (English are in `steps`)
+  stepsEt         String[]           @default([])
   imageUrl        String?
   ingredients     RecipeIngredient[]
   createdAt       DateTime           @default(now())
@@ -34,6 +40,8 @@ model RecipeIngredient {
   recipeId     Int
   ingredientId Int
   quantity     String
+  /// Estonian quantity (English is in `quantity`)
+  quantityEt   String     @default("")
   position     Int
   recipe       Recipe     @relation(fields: [recipeId], references: [id], onDelete: Cascade)
   ingredient   Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Restrict)

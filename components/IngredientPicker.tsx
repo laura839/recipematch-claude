@@ -1,7 +1,9 @@
 "use client";
 
 import { useId, useMemo, useRef, useState } from "react";
+import { searchIngredients } from "@/lib/ingredient-search";
 import type { IngredientOption } from "@/lib/types";
+import { useI18n } from "@/lib/use-i18n";
 import { SearchIcon, XIcon } from "./icons";
 
 type Props = {
@@ -12,29 +14,19 @@ type Props = {
   onRetry: () => void;
 };
 
-const MAX_SUGGESTIONS = 8;
-
 export function IngredientPicker({ options, optionsStatus, selected, onChange, onRetry }: Props) {
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const listId = useId();
+  const { t, lang, pick } = useI18n();
 
-  const suggestions = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return [];
-    const taken = new Set(selected.map((s) => s.slug));
-    const starts: IngredientOption[] = [];
-    const contains: IngredientOption[] = [];
-    for (const option of options) {
-      if (taken.has(option.slug)) continue;
-      const name = option.name.toLowerCase();
-      if (name.startsWith(q)) starts.push(option);
-      else if (name.includes(q)) contains.push(option);
-    }
-    return [...starts, ...contains].slice(0, MAX_SUGGESTIONS);
-  }, [query, options, selected]);
+  // Searches Estonian and English names; shows names in the selected language.
+  const suggestions = useMemo(
+    () => searchIngredients(options, query, lang, new Set(selected.map((s) => s.slug))),
+    [query, options, selected, lang],
+  );
 
   const showList = open && query.trim().length > 0;
 
@@ -72,7 +64,7 @@ export function IngredientPicker({ options, optionsStatus, selected, onChange, o
   return (
     <div>
       <label htmlFor={`${listId}-input`} className="sr-only">
-        Add an ingredient you have
+        {t.find.inputLabel}
       </label>
       <div className="relative">
         <SearchIcon className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-stone-400" />
@@ -89,7 +81,7 @@ export function IngredientPicker({ options, optionsStatus, selected, onChange, o
           autoCapitalize="none"
           spellCheck={false}
           enterKeyHint="done"
-          placeholder={optionsStatus === "loading" ? "Loading ingredients…" : "Type an ingredient, e.g. eggs, rice, tomatoes"}
+          placeholder={optionsStatus === "loading" ? t.find.placeholderLoading : t.find.placeholder}
           disabled={optionsStatus === "error"}
           value={query}
           onChange={(e) => {
@@ -107,12 +99,12 @@ export function IngredientPicker({ options, optionsStatus, selected, onChange, o
           <ul
             id={`${listId}-list`}
             role="listbox"
-            aria-label="Ingredient suggestions"
+            aria-label={t.find.suggestions}
             className="absolute inset-x-0 top-full z-20 mt-2 max-h-72 overflow-auto rounded-2xl bg-white p-1.5 shadow-lg ring-1 ring-stone-200"
           >
             {suggestions.length === 0 ? (
               <li className="px-3 py-3 text-sm text-stone-500">
-                {optionsStatus === "loading" ? "Loading…" : <>No ingredient found for “{query.trim()}”.</>}
+                {optionsStatus === "loading" ? t.find.loading : t.find.noIngredientFound(query.trim())}
               </li>
             ) : (
               suggestions.map((option, index) => (
@@ -128,7 +120,7 @@ export function IngredientPicker({ options, optionsStatus, selected, onChange, o
                     index === activeIndex ? "bg-emerald-50 text-emerald-800" : "text-stone-700"
                   }`}
                 >
-                  {option.name}
+                  {pick(option.name)}
                 </li>
               ))
             )}
@@ -138,24 +130,24 @@ export function IngredientPicker({ options, optionsStatus, selected, onChange, o
 
       {optionsStatus === "error" && (
         <p className="mt-2 text-sm text-rose-600">
-          Couldn’t load ingredients.{" "}
+          {t.find.loadIngredientsError}{" "}
           <button type="button" onClick={onRetry} className="font-medium underline underline-offset-2">
-            Try again
+            {t.find.tryAgain}
           </button>
         </p>
       )}
 
       {selected.length > 0 && (
         <div className="mt-3 flex flex-wrap items-center gap-2">
-          <ul className="contents" aria-label="Selected ingredients">
+          <ul className="contents" aria-label={t.find.selected}>
             {selected.map((item) => (
               <li key={item.slug}>
                 <span className="inline-flex items-center gap-1 rounded-full bg-emerald-600 py-1 pl-3 pr-1 text-sm font-medium text-white shadow-sm">
-                  {item.name}
+                  {pick(item.name)}
                   <button
                     type="button"
                     onClick={() => remove(item.slug)}
-                    aria-label={`Remove ${item.name}`}
+                    aria-label={t.find.remove(pick(item.name))}
                     className="grid h-6 w-6 place-items-center rounded-full transition hover:bg-white/20"
                   >
                     <XIcon className="h-3.5 w-3.5" />
@@ -169,7 +161,7 @@ export function IngredientPicker({ options, optionsStatus, selected, onChange, o
             onClick={() => onChange([])}
             className="px-2 py-1 text-sm font-medium text-stone-500 underline-offset-2 hover:text-stone-800 hover:underline"
           >
-            Clear all
+            {t.find.clearAll}
           </button>
         </div>
       )}

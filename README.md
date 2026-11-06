@@ -18,7 +18,13 @@ Next.js (App Router) · TypeScript · Tailwind CSS · Prisma · PostgreSQL on Ra
 - **Data**: ~130 original recipes in [`data/recipes/`](data/recipes) and standardized ingredients in
   [`data/ingredients.ts`](data/ingredients.ts). [`prisma/seed.ts`](prisma/seed.ts) upserts them by slug
   (idempotent, never deletes).
-- **No accounts**: selected ingredients and favorites are stored in the browser's localStorage.
+- **No accounts**: selected ingredients, favorites and the language are stored in the browser's localStorage.
+- **Bilingual (Estonian / English)**: Estonian is the default. UI texts live in [`lib/i18n.ts`](lib/i18n.ts);
+  Estonian recipe names, steps and ingredient names in [`data/i18n/et/`](data/i18n/et), and quantities are
+  translated by rules in [`data/i18n/et/quantity.ts`](data/i18n/et/quantity.ts). The database stores both
+  languages side by side (`name`/`nameEt`, `steps`/`stepsEt`, `quantity`/`quantityEt`), and matching uses
+  only language-independent slugs. The API returns both languages, so switching language never refetches
+  or resets anything.
 
 ## API
 

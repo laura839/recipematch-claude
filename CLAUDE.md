@@ -30,3 +30,5 @@
 - Migrations are written offline with `prisma migrate diff ... --script` (no local database).
 - The seed (`prisma/seed.ts`) is idempotent: upsert by slug, never delete recipes or ingredients.
 - Matching logic stays a pure function in `lib/match.ts` with tests in `lib/match.test.ts`.
+- The app is bilingual (Estonian default, English). Every new UI text goes into both languages in
+  `lib/i18n.ts`; every new recipe or ingredient needs an Estonian entry in `data/i18n/et/` (tests enforce this).

@@ -108,3 +108,17 @@ describe("rankRecipes", () => {
     expect(compareRanked(ranked[0], ranked[1])).toBeLessThan(0);
   });
 });
+
+describe("language independence", () => {
+  it("produces identical rankings and percentages for English and Estonian names", () => {
+    const build = (names: Record<string, string>) => [
+      recipe("pancakes", [{ slug: "eggs", name: names.eggs, isStaple: false }, { slug: "flour", name: names.flour, isStaple: false }, { slug: "salt", name: names.salt, isStaple: true }], 20, "a"),
+      recipe("omelette", [{ slug: "eggs", name: names.eggs, isStaple: false }], 10, "b"),
+    ];
+    const en = rankRecipes(build({ eggs: "Eggs", flour: "Flour", salt: "Salt" }), ["eggs"]);
+    const et = rankRecipes(build({ eggs: "Munad", flour: "Nisujahu", salt: "Sool" }), ["eggs"]);
+    expect(et.map((r) => [r.recipe.slug, r.match.percent])).toEqual(en.map((r) => [r.recipe.slug, r.match.percent]));
+    expect(en[1].match.missing.map((i) => i.name)).toEqual(["Flour"]);
+    expect(et[1].match.missing.map((i) => i.name)).toEqual(["Nisujahu"]);
+  });
+});

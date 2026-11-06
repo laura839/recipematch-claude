@@ -1,15 +1,17 @@
 "use client";
 
-import { HeartIcon } from "./icons";
 import { useFavorites, useHydrated } from "@/lib/storage";
+import { useI18n } from "@/lib/use-i18n";
+import { HeartIcon } from "./icons";
 
 type Props = { slug: string; name: string; variant?: "overlay" | "inline" };
 
 export function FavoriteButton({ slug, name, variant = "overlay" }: Props) {
   const { favorites, toggleFavorite } = useFavorites();
   const hydrated = useHydrated();
+  const { t } = useI18n();
   const active = hydrated && favorites.includes(slug);
-  const label = active ? `Remove ${name} from favorites` : `Save ${name} to favorites`;
+  const label = active ? t.favorite.remove(name) : t.favorite.save(name);
 
   if (variant === "inline") {
     return (
@@ -25,7 +27,7 @@ export function FavoriteButton({ slug, name, variant = "overlay" }: Props) {
         }`}
       >
         <HeartIcon filled={active} className="h-4 w-4" />
-        {active ? "Saved" : "Save"}
+        {active ? t.favorite.saved : t.favorite.saveShort}
       </button>
     );
   }

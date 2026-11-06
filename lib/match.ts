@@ -16,39 +16,44 @@ export type MatchIngredient = {
   isStaple: boolean;
 };
 
-export type MatchableRecipe = {
+/**
+ * Matching only uses the language-independent `slug` and `isStaple`; `name`
+ * is carried along for display (any language), so results are identical in
+ * every language.
+ */
+export type MatchableRecipe<I extends MatchIngredient = MatchIngredient> = {
   slug: string;
   name: string;
   prepTimeMinutes: number;
-  ingredients: MatchIngredient[];
+  ingredients: I[];
 };
 
-export type MatchResult = {
+export type MatchResult<I extends MatchIngredient = MatchIngredient> = {
   /** Rounded percentage, 0–100 */
   percent: number;
   matchedCount: number;
   totalCount: number;
-  available: MatchIngredient[];
-  missing: MatchIngredient[];
-  staples: MatchIngredient[];
+  available: I[];
+  missing: I[];
+  staples: I[];
 };
 
-export type RankedRecipe<R extends MatchableRecipe> = {
+export type RankedRecipe<R extends MatchableRecipe<MatchIngredient>> = {
   recipe: R;
-  match: MatchResult;
+  match: MatchResult<R["ingredients"][number]>;
 };
 
 /**
  * Computes the match for one recipe. Returns null if the recipe has no
  * non-staple ingredients (staple-only recipes are never matchable).
  */
-export function computeMatch(
-  recipe: MatchableRecipe,
+export function computeMatch<I extends MatchIngredient>(
+  recipe: MatchableRecipe<I>,
   selected: ReadonlySet<string>,
-): MatchResult | null {
-  const available: MatchIngredient[] = [];
-  const missing: MatchIngredient[] = [];
-  const staples: MatchIngredient[] = [];
+): MatchResult<I> | null {
+  const available: I[] = [];
+  const missing: I[] = [];
+  const staples: I[] = [];
 
   for (const ingredient of recipe.ingredients) {
     if (ingredient.isStaple) staples.push(ingredient);
@@ -70,7 +75,7 @@ export function computeMatch(
 }
 
 /** Sort comparator implementing the agreed ranking order. */
-export function compareRanked<R extends MatchableRecipe>(
+export function compareRanked<R extends MatchableRecipe<MatchIngredient>>(
   a: RankedRecipe<R>,
   b: RankedRecipe<R>,
 ): number {
@@ -90,7 +95,7 @@ export function compareRanked<R extends MatchableRecipe>(
 }
 
 /** Filters and ranks recipes for the selected ingredient slugs. */
-export function rankRecipes<R extends MatchableRecipe>(
+export function rankRecipes<R extends MatchableRecipe<MatchIngredient>>(
   recipes: readonly R[],
   selectedSlugs: Iterable<string>,
 ): RankedRecipe<R>[] {
@@ -98,7 +103,7 @@ export function rankRecipes<R extends MatchableRecipe>(
   const ranked: RankedRecipe<R>[] = [];
 
   for (const recipe of recipes) {
-    const match = computeMatch(recipe, selected);
+    const match = computeMatch(recipe as MatchableRecipe<R["ingredients"][number]>, selected);
     if (match && match.matchedCount >= 1) ranked.push({ recipe, match });
   }
 

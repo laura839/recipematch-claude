@@ -1,3 +1,7 @@
+"use client";
+
+import { useI18n } from "@/lib/use-i18n";
+
 export function matchTone(percent: number) {
   if (percent >= 80) return "bg-emerald-600 text-white";
   if (percent >= 50) return "bg-amber-400 text-amber-950";
@@ -5,9 +9,10 @@ export function matchTone(percent: number) {
 }
 
 export function MatchBadge({ percent }: { percent: number }) {
+  const { t } = useI18n();
   return (
     <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold shadow-sm ${matchTone(percent)}`}>
-      {percent}% match
+      {t.card.match(percent)}
     </span>
   );
 }
