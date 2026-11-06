@@ -109,6 +109,9 @@ const en = {
     body: "Please try again in a moment.",
     retry: "Try again",
   },
+  footer: {
+    copyright: "© 2026 RecipeMatch. Built with Claude Code.",
+  },
 };
 
 export type Messages = typeof en;
@@ -210,6 +213,9 @@ const et: Messages = {
     title: "Midagi läks valesti",
     body: "Palun proovi mõne hetke pärast uuesti.",
     retry: "Proovi uuesti",
+  },
+  footer: {
+    copyright: "© 2026 RecipeMatch. Loodud Claude Code'i abil.",
   },
 };
 
